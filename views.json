@@ -1,13 +1,38 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Drawing Control for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Drawing control this week",
+    "subtitle": "Fictional demo when seeded. Read-only record checks, not engineering approval.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Drawing register",
+        "sql": "select number,title,site,approved_revision,latest_revision,latest_status,pending_reviews from drawing_register order by number"
+      },
+      {
+        "title": "Outstanding reviews",
+        "sql": "select number,revision,reviewer,due_on,days_overdue from review_queue order by due_on"
+      }
+    ]
+  },
+  {
+    "name": "handovers",
+    "title": "Handover watch",
+    "sections": [
+      {
+        "title": "Acknowledgements and old revisions",
+        "sql": "select reference,recipient,due_on,acknowledged_at,drawings,superseded_items from handover_register order by reference",
+        "note": "An acknowledgement does not make an obsolete drawing current."
+      }
+    ]
+  },
+  {
+    "name": "compliance",
+    "title": "Design information checks",
+    "sections": [
+      {
+        "title": "Records needing review",
+        "sql": "select * from compliance_findings order by number,rule",
+        "note": "Evidence checks only. A qualified person reviews the actual design and applicable duties."
       }
     ]
   }

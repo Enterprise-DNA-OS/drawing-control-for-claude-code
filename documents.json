@@ -1,11 +1,60 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "transmittal",
+    "title": "DRAFT: Drawing transmittal cover sheet",
+    "for_each": "select id,reference from transmittals",
+    "file": "reference",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Handover record",
+        "sql": "select reference,recipient,purpose,due_on,recorded_by,acknowledged_at,acknowledgement_ref from transmittals where id=$1",
+        "note": "Record only. Nothing sent. Check current status and file content before issuing."
+      },
+      {
+        "title": "Drawing schedule",
+        "sql": "select d.number,d.title,r.revision,r.status,r.file_ref,r.risk_ref,r.safe_use_ref from transmittal_items i join revisions r on r.id=i.revision_id join drawings d on d.id=r.drawing_id where i.transmittal_id=$1 order by d.number"
+      }
+    ]
+  },
+  {
+    "name": "revision-record",
+    "title": "DRAFT: Drawing revision record",
+    "for_each": "select id,number from drawings",
+    "file": "number",
+    "sections": [
+      {
+        "title": "Drawing",
+        "sql": "select number,title,site,discipline,asset,owner,safety_critical from drawings where id=$1"
+      },
+      {
+        "title": "Revision history",
+        "sql": "select revision,sequence,status,purpose,file_ref,approved_by,approved_at,decision_ref from revisions where drawing_id=$1 order by sequence"
+      },
+      {
+        "title": "Review evidence",
+        "sql": "select r.revision,rv.reviewer,rv.status,rv.due_on,rv.evidence from reviews rv join revisions r on r.id=rv.revision_id where r.drawing_id=$1 order by r.sequence,rv.reviewer"
+      },
+      {
+        "title": "Operator notes",
+        "sql": "select actor,body,created_at from notes where drawing_id=$1 order by created_at"
+      }
+    ]
+  },
+  {
+    "name": "design-information",
+    "title": "DRAFT: Design information handover",
+    "for_each": "select id,number from drawings where safety_critical",
+    "file": "number",
+    "sections": [
+      {
+        "title": "Safety information references",
+        "sql": "select d.number,d.title,r.revision,r.status,r.purpose,r.risk_ref,r.safe_use_ref from drawings d join revisions r on r.drawing_id=d.id where d.id=$1 order by r.sequence",
+        "note": "References are not the safety assessment itself. Verify the underlying documents and provide them through the approved process."
+      },
+      {
+        "title": "Record gaps",
+        "sql": "select c.* from compliance_findings c join drawings d on d.number=c.number where d.id=$1"
+      }
     ]
   }
 ]

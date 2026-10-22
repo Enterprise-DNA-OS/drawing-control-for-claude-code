@@ -1,43 +1,61 @@
-# Drawing Control for Claude Code: operating instructions
+# Drawing Control for Claude Code
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+## Business context
 
-## Who this is for
+Business: [your asset owner or engineering office]. Operator: [your name and role]. Priorities: current drawing revisions, review queues and handover evidence. Set these before using real records.
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
+Use scripts/drawings.mjs as the one CLI. Read docs/cli.md and docs/compliance.md. The database holds records, not proof that an engineering design is safe. All demo people, sites and files are fictional.
 
-Fill this in once. A worker with context knows. A worker without it guesses.
+## Recurring jobs
 
-## How to work
-
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
-
-## Routing table: one right way for each recurring job
-
-| When the operator asks for... | Use this |
+| Command | Result |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| `/register` | Read the drawing register, current approval and latest work in progress. |
+| `/drawing` | Read a drawing, all revisions and operator notes. |
+| `/review-queue` | Review overdue assignments and safety-critical drawings first. |
+| `/handover-check` | Check acknowledgements and handovers containing superseded revisions. |
+| `/revision-history` | Read ordered revision history and approval evidence. |
+| `/file-register` | Read drawing file references. Check file contents through the approved document process. |
+| `/activity` | Read local mutation history with operator labels. |
+| `/attention` | Find overdue reviews, late acknowledgements and drawings with stale notes. |
+| `/compliance` | Check design information references and record-control exceptions. Read docs/compliance.md first. |
+| `/dashboard` | Count drawings and missing approvals by site and discipline. |
+| `/insights` | Answer ten cross-record questions with the actual results. |
+| `/add` | Create a drawing only from operator-supplied facts. |
+| `/update-drawing` | Update supplied metadata. Read the drawing first. A safety classification is a human decision. |
+| `/set-evidence` | Complete draft revision references before review starts. |
+| `/revise` | Create the next revision with its own evidence. Revision labels are text, sequence is automatic. |
+| `/submit-review` | Assign a real reviewer and the agreed internal due date. |
+| `/record-review` | Record a review already performed by the named reviewer. Never infer acceptance from a complete record. |
+| `/approve` | Record an explicit engineering approval supplied by the operator. Read all reviews and evidence first. |
+| `/transmit` | Record a handover schedule of current approved revisions. This records locally and sends nothing. |
+| `/acknowledge` | Record receipt only when the operator provides evidence. |
+| `/log` | Add a factual note to the drawing history. |
+| `/weekly-review` | Draft the Monday review from dashboard, attention and compliance. Present exceptions and named owners. |
+| `/draft-transmittal` | Draft a cover sheet from a recorded handover. Check current revision status before sharing. |
+| `/draft-review` | Draft a review request from the full drawing history. |
+| `/import` | Read docs/replace-redeye.md. Inspect the two header rows, map labels and run a dry run before importing. |
+| `/export` | Export every domain record, original import and audit event to a private destination. |
+| `/view` | Render read-only drawing, handover and record-check dashboards. |
+| `/documents` | Render branded draft transmittals, revision records and design information schedules. |
+| `/customise` | Change fields and rules with a new migration and verified output. |
+| `/new-view` | Add a branded read-only answer to a business question. |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+## Operating rules
 
-## Hard rules
+- Read the full drawing and reviews before writing. Use exact IDs when names are ambiguous.
+- A qualified person assesses the actual drawing. Record only approvals, reviews and receipt evidence the operator explicitly supplies. Never manufacture acceptance.
+- Actor names are operator labels, not authenticated identities or digital signatures.
+- A transmittal is a local handover record. No command sends a message, releases an engineering drawing externally or files a report.
+- Safety-critical drawings require purpose, risk and safe-use references before approval. A populated reference does not validate its content.
+- Imported metadata starts in draft and defaults to safety-critical until the operator classifies it. Vendor status is preserved in the raw source, never treated as a local approval.
+- Due dates and stale-note thresholds are internal operating rules, not legal notice periods.
+- Every import is one transaction. Start with --dry-run and a separate trial database. Reconcile counts, identifiers, revision labels and files. Changed source rows require explicit reconciliation.
+- Never delete business records. Rejected or obsolete revisions remain in history. Create a new revision to change evidence after review starts.
+- The CLI serializes writes with database locks. The database owner can bypass application checks. Local audit history is not tamper-proof.
+- RLS denies public access. Production team access requires deployment identity, roles, backup and tested restore controls.
+- DATABASE_URL selects PostgreSQL, otherwise DATA_DIR selects local PGlite. npm run demo always isolates its data and outputs. Never put real files in demo directories.
+- Keep imports, exports, drafts and rendered output private. Do not commit real drawings or customer records.
+- Use main. New schema changes need new migrations and npm test. Do not rewrite applied migrations.
 
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
-
-## Where things live
-
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off Accruent RedEye.
-
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/redeye
+Omni by Enterprise DNA customises and operates your system: https://enterprisedna.co/omni/book?offer=replace-software&utm_source=github&utm_medium=instructions&utm_campaign=redeye

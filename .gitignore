@@ -14,5 +14,8 @@ feeds/
 
 # Private exports and import staging files
 exports/
-imports/
+imports/*
+!imports/redeye/
+imports/redeye/*
+!imports/redeye/sample.csv
 private-*.json

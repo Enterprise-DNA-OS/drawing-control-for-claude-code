@@ -1,115 +1,118 @@
-<h1 align="center">Drawing Control for Claude Code</h1>
+# Drawing Control for Claude Code
 
-<p align="center">
-  <strong>The open-source engineering drawing register that is just a database and Claude Code.</strong>
-</p>
+Your engineering drawing register, revision reviews and handovers in a database you own. Free MIT code from Enterprise DNA. Works with Claude Code, Codex, OpenCode or Cursor.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free code. Install and run the demo. Hosting and coding-agent costs are yours. | Your drawing fields, review rules, archive connections and screens. [Get your version built](https://enterprisedna.co/omni/book?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=redeye). | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. [Book a call](https://enterprisedna.co/omni/book?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=redeye). |
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Accruent RedEye data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=redeye">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/redeye?utm_source=github&utm_medium=readme&utm_campaign=redeye">How it works</a></td>
-  </tr>
-</table>
+## The drawing-control desk
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-redeye">Instead of Accruent RedEye</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
+Run a weekly register review, chase overdue engineering reviews, check design-information references, identify recipients holding superseded revisions, and prepare handover paperwork. The database holds records and file references. Qualified people assess actual drawings and supply approval evidence.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
+This is a focused engineering drawing register, not a CAD editor or the whole RedEye platform. It requires no OAuth service or web server. Read [why no front end](docs/why-no-front-end.md) for the operating boundary.
 
----
-
-## What is this
-
-Drawing Control for Claude Code does the job you pay Accruent RedEye for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Accruent RedEye dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Accruent RedEye per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=redeye).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
+Accruent lists RedEye Core at US$16,000 a year, Advanced at US$48,000 and Enterprise at US$80,000. These are indicative vendor prices with artefact costs and configuration caveats, not verified customer invoices. [Vendor pricing](https://www.accruent.com/product-pricing), checked 22 October 2026.
 
 ## Quick start
 
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+Node 20 or newer. No database server needed for the local demo.
 
 ```bash
 git clone https://github.com/Enterprise-DNA-OS/drawing-control-for-claude-code.git
 cd drawing-control-for-claude-code
 npm install
+npm test
 npm run demo
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+The demo isolates its data under .data/demo and its output under .data/demo-output, even when DATABASE_URL is set. All people, sites and files are fictional. It includes an overdue safety-critical review, a missing file reference and a handover containing a superseded drawing.
 
-### Use it with your own Postgres or Supabase
+For more demo queries on Bash, use DATA_DIR=.data/demo before the command. On PowerShell, set $env:DATA_DIR='.data/demo'. For real records choose a fresh directory, run npm run migrate, then import without seeding. Read [CLI reference](docs/cli.md).
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## Commands
 
-## The commands
-
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
-
-| Command | What it does |
+| Command | Result |
 |---|---|
-| `/...` | ... |
+| `/register` | Read the drawing register, current approval and latest work in progress. |
+| `/drawing` | Read a drawing, all revisions and operator notes. |
+| `/review-queue` | Review overdue assignments and safety-critical drawings first. |
+| `/handover-check` | Check acknowledgements and handovers containing superseded revisions. |
+| `/revision-history` | Read ordered revision history and approval evidence. |
+| `/file-register` | Read drawing file references. Check file contents through the approved document process. |
+| `/activity` | Read local mutation history with operator labels. |
+| `/attention` | Find overdue reviews, late acknowledgements and drawings with stale notes. |
+| `/compliance` | Check design information references and record-control exceptions. Read docs/compliance.md first. |
+| `/dashboard` | Count drawings and missing approvals by site and discipline. |
+| `/insights` | Answer ten cross-record questions with the actual results. |
+| `/add` | Create a drawing only from operator-supplied facts. |
+| `/update-drawing` | Update supplied metadata. Read the drawing first. A safety classification is a human decision. |
+| `/set-evidence` | Complete draft revision references before review starts. |
+| `/revise` | Create the next revision with its own evidence. Revision labels are text, sequence is automatic. |
+| `/submit-review` | Assign a real reviewer and the agreed internal due date. |
+| `/record-review` | Record a review already performed by the named reviewer. Never infer acceptance from a complete record. |
+| `/approve` | Record an explicit engineering approval supplied by the operator. Read all reviews and evidence first. |
+| `/transmit` | Record a handover schedule of current approved revisions. This records locally and sends nothing. |
+| `/acknowledge` | Record receipt only when the operator provides evidence. |
+| `/log` | Add a factual note to the drawing history. |
+| `/weekly-review` | Draft the Monday review from dashboard, attention and compliance. Present exceptions and named owners. |
+| `/draft-transmittal` | Draft a cover sheet from a recorded handover. Check current revision status before sharing. |
+| `/draft-review` | Draft a review request from the full drawing history. |
+| `/import` | Read docs/replace-redeye.md. Inspect the two header rows, map labels and run a dry run before importing. |
+| `/export` | Export every domain record, original import and audit event to a private destination. |
+| `/view` | Render read-only drawing, handover and record-check dashboards. |
+| `/documents` | Render branded draft transmittals, revision records and design information schedules. |
+| `/customise` | Change fields and rules with a new migration and verified output. |
+| `/new-view` | Add a branded read-only answer to a business question. |
 
-## Instead of redeye
+## Ten questions across your records
 
-<!-- TODO(author): how to bring data across from Accruent RedEye; link docs/replace-redeye.md -->
+1. Which safety-critical drawings have an overdue review and missing design information?
+2. Which recipients still hold a superseded drawing revision?
+3. Which sites have drawings without an approved revision?
+4. Which reviewers have the largest overdue queue?
+5. Which assets have several drawings but no approved revision for at least one?
+6. Which approved revisions have never appeared in a handover?
+7. Which drawings have both an approved revision and newer work in progress?
+8. Which unacknowledged handovers are overdue and contain superseded drawings?
+9. Which drawing owners have a note older than fourteen days?
+10. Which imported drawings still need their first local review?
 
-## Architecture
+Every question runs today through the insights command. These combine your revision and handover records; they are not a claim that a configured RedEye report can never answer the same question.
 
+## Your first hour: ten things to ask for
+
+1. Show the drawing register for each site.
+2. Show the full history of DW-101.
+3. Which engineering reviews are overdue?
+4. Who still holds a superseded revision?
+5. Which safety-critical drawings lack design-information references?
+6. Draft a handover cover sheet for TX-101.
+7. Draft the Monday review from the current records.
+8. Import my RedEye metadata after a trial run.
+9. Add our drawing coordinator field and show it in the register.
+10. Add a read-only view of our overdue reviews by discipline.
+
+## Records, documents and controls
+
+npm run docs produces branded draft transmittal covers, revision records and design-information schedules. npm run view renders the week, handover watch and compliance findings. Set business name, logo and colours in brand.json. HTML is read-only, with no action buttons or running server.
+
+The [compliance guide](docs/compliance.md) cites WorkSafe New Zealand and separates statutory design-information context from internal record checks. References are not certificates. All assigned reviewers must accept before the latest revision can be approved. A new approval supersedes the previous version without erasing its history. Earlier handovers stay visible.
+
+## Bring your RedEye register
+
+Export bucket metadata through RedEye's Bulk CSV Tool. The importer supports its two-header shape and configurable labels, preserves source rows and the original CSV, validates the batch together, and refuses changed source rows pending reconciliation. Imported records start as drafts and require local review. Native files, annotations and historical approval signatures need a separate archive migration. [Switching guide](docs/replace-redeye.md).
+
+```bash
+node scripts/drawings.mjs import redeye --file="imports/redeye/sample.csv" --dry-run --actor="Document controller"
 ```
-drawing-control-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
 
-## Built for coding agents
+## Storage and verification
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+Plain PostgreSQL migrations also run on PGlite. UUIDs, foreign keys, uniqueness constraints, timestamps and indexes support the record model. RLS blocks public access. A controlled database-owner connection operates the CLI. Actor labels and local audit history are not authentication or tamper-proof signatures. Team deployment needs identity, permissions, archive controls, backup and a tested restore.
 
-## Contributing
+npm test uses a temporary database and output directory. It exercises domain reads, writes, approval gates, rejection, imports, rollback, repeat imports, original-source preservation, ambiguity, exports, drafts and escaped HTML. CI is configured for Node 20 and 22 on Linux and Windows. See the actual Actions run for platform results.
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+## Licence
 
-## Want it installed and run for you?
-
-Enterprise DNA installs Drawing Control for Claude Code for your business, migrates your Accruent RedEye data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
-
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=redeye)
-- Read more: [enterprisedna.co/omni/instead-of/redeye](https://enterprisedna.co/omni/instead-of/redeye?utm_source=github&utm_medium=readme&utm_campaign=redeye)
-
-## License
-
-MIT. Copyright (c) 2026 Enterprise DNA.
+MIT. Copyright (c) 2026 Enterprise DNA. RedEye and Accruent are their owners' trademarks. This independent project is not affiliated with or endorsed by Accruent.
